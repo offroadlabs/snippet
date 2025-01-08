@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Code Snippet Generator
 
-## Getting Started
+Un outil puissant pour générer et formater vos extraits de code. Parfait pour les développeurs souhaitant partager leur code de manière claire et professionnelle.
 
-First, run the development server:
+## 🚀 Fonctionnalités
+
+- Support de plus de 30 langages de programmation
+- Coloration syntaxique avancée
+- Export en PNG haute qualité
+- Formats portrait et paysage
+- Personnalisation de l'apparence
+- Interface utilisateur intuitive
+
+## 🛠️ Technologies Utilisées
+
+- **Frontend**: Next.js 15, React, TypeScript
+- **UI**: Tailwind CSS, Shadcn/UI, Radix UI
+- **Outils**: html2canvas, react-syntax-highlighter
+- **Performance**: Optimisé pour le Web Vitals
+- **Déploiement**: Vercel
+
+## 🏁 Démarrage Rapide
+
+1. Clonez le dépôt :
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+git clone https://github.com/offroadlabs/snippet.git
+```
+
+2. Installez les dépendances :
+
+```bash
+bun install
+```
+
+3. Lancez le serveur de développement :
+
+```bash
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔧 Services Professionnels
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Expertise Technique
+Je propose des services de développement et de conseil dans les domaines suivants :
 
-## Learn More
+- Applications Web modernes (Next.js, React, TypeScript)
+- APIs et Microservices (Symfony, Node.js)
+- Architecture logicielle et DevOps
+- Formation et accompagnement technique
 
-To learn more about Next.js, take a look at the following resources:
+### Domaines d'Intervention
+- Développement d'applications sur mesure
+- Migration et modernisation de systèmes existants
+- Optimisation des performances
+- Consulting technique
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Technologies Maîtrisées
+- **Frontend**: TypeScript, React, Next.js, Tailwind
+- **Backend**: PHP/Symfony, Node.js
+- **Mobile**: Flutter, React Native
+- **DevOps**: Docker, CI/CD, AWS
+- **Base de données**: PostgreSQL, MySQL, MongoDB
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📫 Contact
 
-## Deploy on Vercel
+Pour toute demande de collaboration ou de développement sur mesure :
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- 📧 Email: [sebastien@offroadlabs.com](mailto:sebastien@offroadlabs.com)
+- 📝 Blog: [https://timoner.com](https://timoner.com)
+- 🌐 Site: [https://offroadlabs.com](https://offroadlabs.com)
+- 📅 Calendrier: [Prendre rendez-vous](https://hub.timoner.com)
+- 📍 Localisation: Aix-en-Provence, France
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 Licence
+
+Ce projet est sous licence MIT - voir le fichier [LICENSE.md](LICENSE.md) pour plus de détails.
+
+## ⭐ Contribuer
+
+Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request.
+
+---
+
+Développé par [Sébastien TIMONER](https://github.com/offroadlabs)
