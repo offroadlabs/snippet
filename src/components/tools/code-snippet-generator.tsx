@@ -17,6 +17,7 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Language {
   id: string;
@@ -93,12 +94,17 @@ export function CodeSnippetGenerator({
     fitContent: true,
   });
   const previewRef = useRef<HTMLDivElement>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   const handleExport = async () => {
     if (!previewRef.current || isExporting) return;
 
     try {
       setIsExporting(true);
+      setIsCapturing(true);
+
+      // Attendre un peu pour que l'animation de flash soit visible
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       const exportContainer = document.createElement("div");
       exportContainer.style.padding = "48px";
@@ -208,13 +214,43 @@ export function CodeSnippetGenerator({
       console.error("Export failed:", error);
     } finally {
       setIsExporting(false);
+      setIsCapturing(false);
     }
   };
 
+  const containerAnimation = {
+    initial: { opacity: 0, y: 20 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemAnimation = {
+    initial: { opacity: 0, y: 10 },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.3 },
+    },
+  };
+
   return (
-    <section className="w-full max-w-4xl mx-auto py-8">
+    <motion.section
+      variants={containerAnimation}
+      initial="initial"
+      animate="animate"
+      className="w-full max-w-4xl mx-auto py-8"
+    >
       <div className="space-y-4">
-        <div className="prose dark:prose-invert max-w-none">
+        <motion.div
+          variants={itemAnimation}
+          className="prose dark:prose-invert max-w-none"
+        >
           <p className="text-gray-600 dark:text-gray-300">
             {description ||
               `A powerful tool to generate and format your code snippets. 
@@ -230,9 +266,12 @@ export function CodeSnippetGenerator({
             <span className="text-sm text-secondary">Java</span>
             <span className="text-sm text-secondary">and more...</span>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="relative flex flex-col gap-8 p-6 sm:p-8 rounded-3xl bg-background/40 backdrop-blur-xl border border-border/50 shadow-2xl">
+        <motion.div
+          variants={itemAnimation}
+          className="relative flex flex-col gap-8 p-6 sm:p-8 rounded-3xl bg-background/40 backdrop-blur-xl border border-border/50 shadow-2xl"
+        >
           <div className="flex flex-col sm:flex-row gap-6 sm:items-center sm:justify-between">
             <div className="flex items-center gap-4 flex-wrap">
               <Select
@@ -442,8 +481,32 @@ export function CodeSnippetGenerator({
             </div>
             <div className="absolute -inset-0.5 bg-gradient-to-r from-primary via-secondary to-primary rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-1000 animate-gradient-x -z-10"></div>
           </div>
-        </div>
+
+          <AnimatePresence>
+            {isCapturing && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="absolute inset-0 bg-white/30 backdrop-blur-sm rounded-xl z-10"
+              >
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ type: "spring", damping: 15 }}
+                    className="bg-background/90 backdrop-blur-sm text-foreground px-4 py-2 rounded-lg shadow-lg"
+                  >
+                    Capturing...
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
