@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/layout/footer";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
+import { getUrl } from "@/lib/utils";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://snippet.timoner.com"),
+  metadataBase: new URL(getUrl()),
   title: {
     default: "Code Snippet Generator | Create Beautiful Code Snippets",
     template: "%s | Code Snippet Generator",
@@ -46,15 +47,15 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://snippet.timoner.com",
+    canonical: getUrl(),
     languages: {
-      "en-US": "https://snippet.timoner.com",
+      "en-US": getUrl(),
     },
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://snippet.timoner.com",
+    url: getUrl(),
     siteName: "Code Snippet Generator",
     title: "Code Snippet Generator | Create Beautiful Code Snippets",
     description:
