@@ -83,7 +83,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-  themeColor: "#9ec33a",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -92,6 +91,10 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
+};
+
+export const viewport = {
+  themeColor: "#9ec33a",
 };
 
 export default function RootLayout({
