@@ -19,11 +19,7 @@ const containerAnimation = {
   },
 };
 
-interface AnimatedGeneratorProps {
-  description: string;
-}
-
-export function AnimatedGenerator({ description }: AnimatedGeneratorProps) {
+export function AnimatedGenerator() {
   return (
     <motion.div
       variants={containerAnimation}
@@ -31,7 +27,7 @@ export function AnimatedGenerator({ description }: AnimatedGeneratorProps) {
       animate="animate"
       className="flex justify-center w-full"
     >
-      <CodeSnippetGenerator description={description} />
+      <CodeSnippetGenerator />
     </motion.div>
   );
 }

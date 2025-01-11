@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { AnimatedHero } from "@/components/home/animated-hero";
 import { AnimatedGenerator } from "@/components/home/animated-generator";
+import { Description } from "@/components/home/description";
 
 export const metadata: Metadata = {
   title: "Code Snippet Generator | Free Developer Tool",
@@ -17,21 +18,12 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  const description = `
-    Transform your source code into elegant and professional snippets. 
-    Our snippet generator offers:
-    • Syntax highlighting for over 30 languages
-    • Custom styling and theming
-    • Export to PNG, SVG or HTML
-    • Quick copy to clipboard
-    • Support for annotations and comments
-  `;
-
   return (
     <main className="min-h-screen py-12 bg-gradient-to-b from-primary/5 via-secondary/5 to-primary/5">
       <div className="container mx-auto max-w-[90rem] px-4">
         <AnimatedHero />
-        <AnimatedGenerator description={description} />
+        <Description />
+        <AnimatedGenerator />
       </div>
     </main>
   );

@@ -78,13 +78,7 @@ const LANGUAGES: Language[] = [
 
 const SITE_URL = "https://snippet.timoner.com";
 
-interface CodeSnippetGeneratorProps {
-  description?: string;
-}
-
-export function CodeSnippetGenerator({
-  description,
-}: CodeSnippetGeneratorProps) {
+export function CodeSnippetGenerator() {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState<string>("typescript");
   const [isExporting, setIsExporting] = useState(false);
@@ -247,27 +241,6 @@ export function CodeSnippetGenerator({
       className="w-full max-w-4xl mx-auto py-8"
     >
       <div className="space-y-4">
-        <motion.div
-          variants={itemAnimation}
-          className="prose dark:prose-invert max-w-none"
-        >
-          <p className="text-gray-600 dark:text-gray-300">
-            {description ||
-              `A powerful tool to generate and format your code snippets. 
-              Perfect for developers wanting to share their code in a clear and professional way. 
-              Supports over 30 programming languages with syntax highlighting.`}
-          </p>
-
-          <div className="mt-2 flex flex-wrap gap-2">
-            <span className="text-sm text-primary">Supported languages:</span>
-            <span className="text-sm text-secondary">TypeScript</span>
-            <span className="text-sm text-secondary">JavaScript</span>
-            <span className="text-sm text-secondary">Python</span>
-            <span className="text-sm text-secondary">Java</span>
-            <span className="text-sm text-secondary">and more...</span>
-          </div>
-        </motion.div>
-
         <motion.div
           variants={itemAnimation}
           className="relative flex flex-col gap-8 p-6 sm:p-8 rounded-3xl bg-background/40 backdrop-blur-xl border border-border/50 shadow-2xl"
