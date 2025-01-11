@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { AnimatedHero } from "@/components/home/animated-hero";
+import { AnimatedHero } from "@/components/home/hero";
 import { AnimatedGenerator } from "@/components/home/animated-generator";
 import { Description } from "@/components/home/description";
 

@@ -70,6 +70,8 @@ export default {
   			'gradient-x': 'gradient-x 15s ease infinite',
   			'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
   			'pulse-slower': 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+  			'fade-in': 'fade-in 0.5s ease-out forwards',
+  			'fade-in-delayed': 'fade-in 0.5s ease-out 0.2s forwards',
   		},
   		keyframes: {
   			'gradient-x': {
@@ -81,6 +83,10 @@ export default {
   					'background-size': '200% 200%',
   					'background-position': 'right center'
   				},
+  			},
+  			'fade-in': {
+  				'0%': { opacity: '0', transform: 'translateY(20px)' },
+  				'100%': { opacity: '1', transform: 'translateY(0)' },
   			},
   		},
   	}
