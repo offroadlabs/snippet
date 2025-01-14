@@ -24,7 +24,7 @@ export function ExportFormatToggle({
           }))
         }
         className="bg-background/50 text-foreground border-border/50 hover:bg-background/70 data-[state=on]:bg-primary/20 transition-all duration-300"
-        aria-label="Export en paysage"
+        aria-label="Export in landscape"
       >
         <Monitor className="h-4 w-4" />
       </Toggle>
@@ -37,7 +37,7 @@ export function ExportFormatToggle({
           }))
         }
         className="bg-background/50 text-foreground border-border/50 hover:bg-background/70 data-[state=on]:bg-primary/20 transition-all duration-300"
-        aria-label="Export en portrait"
+        aria-label="Export in portrait"
       >
         <Smartphone className="h-4 w-4" />
       </Toggle>
@@ -50,9 +50,22 @@ export function ExportFormatToggle({
           }))
         }
         className="bg-background/50 text-foreground border-border/50 hover:bg-background/70 data-[state=on]:bg-primary/20 transition-all duration-300"
-        aria-label="Ajuster à la taille du contenu"
+        aria-label="Fit to content"
       >
         <Expand className="h-4 w-4" />
+      </Toggle>
+      <Toggle
+        pressed={exportOptions.includeWatermark}
+        onPressedChange={(pressed) =>
+          setExportOptions((prev: ExportOptions) => ({
+            ...prev,
+            includeWatermark: pressed,
+          }))
+        }
+        className="bg-background/50 text-foreground border-border/50 hover:bg-background/70 data-[state=on]:bg-primary/20 transition-all duration-300"
+        aria-label="Include watermark"
+      >
+        Watermark
       </Toggle>
     </div>
   );

@@ -3,6 +3,7 @@ export type ExportFormat = "landscape" | "portrait";
 export interface ExportOptions {
   format: ExportFormat;
   fitContent: boolean;
+  includeWatermark: boolean;
 }
 
 export interface Language {

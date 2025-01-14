@@ -20,6 +20,7 @@ export function CodeSnippetGenerator() {
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     format: "portrait",
     fitContent: true,
+    includeWatermark: true,
   });
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [selectedStamp, setSelectedStamp] = useState<string | null>(null);
@@ -190,19 +191,21 @@ export function CodeSnippetGenerator() {
 
       exportContainer.appendChild(contentToExport);
 
-      // Ajouter l'URL en filigrane
-      const watermark = document.createElement("div");
-      watermark.style.position = "absolute";
-      watermark.style.bottom = "16px";
-      watermark.style.left = "0";
-      watermark.style.width = "100%";
-      watermark.style.textAlign = "center";
-      watermark.style.color = "rgb(148 163 184)";
-      watermark.style.fontSize = "8px";
-      watermark.style.fontFamily = "monospace";
-      watermark.style.opacity = "0.7";
-      watermark.textContent = `Powered by ${SITE_URL}`;
-      exportContainer.appendChild(watermark);
+      // Ajouter l'URL en filigrane si l'option est activée
+      if (exportOptions.includeWatermark) {
+        const watermark = document.createElement("div");
+        watermark.style.position = "absolute";
+        watermark.style.bottom = "16px";
+        watermark.style.left = "0";
+        watermark.style.width = "100%";
+        watermark.style.textAlign = "center";
+        watermark.style.color = "rgb(148 163 184)";
+        watermark.style.fontSize = "8px";
+        watermark.style.fontFamily = "monospace";
+        watermark.style.opacity = "0.7";
+        watermark.textContent = `Powered by ${SITE_URL}`;
+        exportContainer.appendChild(watermark);
+      }
 
       document.body.appendChild(exportContainer);
 
