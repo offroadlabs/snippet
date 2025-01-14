@@ -10,18 +10,20 @@ import { SITE_URL, STAMP_ICONS } from "./code-snippet-generator/constants";
 import { Toolbar } from "./code-snippet-generator/toolbar";
 import { CodePreview } from "./code-snippet-generator/code-preview";
 import { CaptureOverlay } from "./code-snippet-generator/capture-overlay";
-import type { Stamp, ExportOptions } from "./code-snippet-generator/types";
+import type { Stamp, ExportFormat } from "./code-snippet-generator/types";
+import { useCodeGeneratorStore } from "@/store/code-generator-store";
 
 export function CodeSnippetGenerator() {
-  const [code, setCode] = useState("");
-  const [language, setLanguage] = useState<string>("typescript");
-  const [isExporting, setIsExporting] = useState(false);
-  const [showLineNumbers, setShowLineNumbers] = useState(true);
-  const [exportOptions, setExportOptions] = useState<ExportOptions>({
-    format: "portrait",
-    fitContent: true,
-    includeWatermark: true,
-  });
+  const {
+    code,
+    language,
+    isExporting,
+    showLineNumbers,
+    exportOptions,
+    title,
+    setCode,
+    setIsExporting,
+  } = useCodeGeneratorStore();
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [selectedStamp, setSelectedStamp] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement | null>(null);
@@ -155,17 +157,45 @@ export function CodeSnippetGenerator() {
         exportContainer.style.justifyContent = "center";
       }
 
-      // Définir les dimensions selon le format
-      if (exportOptions.format === "portrait") {
-        exportContainer.style.width = "1080px";
-        if (!exportOptions.fitContent) {
-          exportContainer.style.height = "1350px";
+      const getDimensions = (format: ExportFormat) => {
+        switch (format) {
+          case "portrait":
+            return { width: 1080, height: 1350 };
+          case "landscape":
+            return { width: 1920, height: 1080 };
+          case "x-post":
+            return { width: 1200, height: 675 };
+          case "x-card":
+            return { width: 1200, height: 628 };
+          case "linkedin-post":
+            return { width: 1200, height: 1200 };
+          case "linkedin-article":
+            return { width: 1200, height: 644 };
+          default:
+            // Valeur par défaut au cas où
+            return { width: 1080, height: 1350 };
         }
-      } else {
-        exportContainer.style.width = "1920px";
-        if (!exportOptions.fitContent) {
-          exportContainer.style.height = "1080px";
-        }
+      };
+
+      const dimensions = getDimensions(exportOptions.format);
+      exportContainer.style.width = `${dimensions.width}px`;
+      if (!exportOptions.fitContent) {
+        exportContainer.style.height = `${dimensions.height}px`;
+      }
+
+      // Ajouter le titre en en-tête
+      if (title) {
+        const titleElement = document.createElement("div");
+        titleElement.style.position = "absolute";
+        titleElement.style.left = "0";
+        titleElement.style.width = "100%";
+        titleElement.style.top = "0";
+        titleElement.style.textAlign = "center";
+        titleElement.style.fontSize = "24px";
+        titleElement.style.fontWeight = "bold";
+        titleElement.style.color = "rgb(148 163 184)";
+        titleElement.textContent = title;
+        exportContainer.appendChild(titleElement);
       }
 
       // Cloner et ajuster le contenu à exporter
@@ -216,12 +246,10 @@ export function CodeSnippetGenerator() {
         scale: 2,
         backgroundColor: null,
         logging: false,
-        width: exportOptions.format === "portrait" ? 1080 : 1920,
+        width: dimensions.width,
         height: exportOptions.fitContent
           ? Math.ceil(contentRect.height)
-          : exportOptions.format === "portrait"
-          ? 1350
-          : 1080,
+          : dimensions.height,
       });
 
       // Nettoyer le DOM
@@ -301,15 +329,7 @@ export function CodeSnippetGenerator() {
           </div>
 
           <Toolbar
-            language={language}
-            setLanguage={setLanguage}
-            exportOptions={exportOptions}
-            setExportOptions={setExportOptions}
-            showLineNumbers={showLineNumbers}
-            setShowLineNumbers={setShowLineNumbers}
             handleExport={handleExport}
-            isExporting={isExporting}
-            code={code}
             handleStampClick={handleStampClick}
           />
 

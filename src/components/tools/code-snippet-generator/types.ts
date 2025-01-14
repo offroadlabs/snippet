@@ -1,4 +1,10 @@
-export type ExportFormat = "landscape" | "portrait";
+export type ExportFormat = 
+  | "portrait"
+  | "landscape" 
+  | "x-post"
+  | "x-card"
+  | "linkedin-post"
+  | "linkedin-article";
 
 export interface ExportOptions {
   format: ExportFormat;
@@ -23,4 +29,11 @@ export interface StampIcon {
   id: string;
   emoji: string;
   label: string;
+}
+
+export interface FormatOption {
+  id: ExportFormat;
+  label: string;
+  dimensions: string;
+  description?: string;
 } 
