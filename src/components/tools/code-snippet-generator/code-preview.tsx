@@ -4,7 +4,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import * as themes from "react-syntax-highlighter/dist/esm/styles/prism";
 import type { PanInfo } from "framer-motion";
 import { PreviewHeader } from "./preview-header";
-import { StampsOverlay } from "./stamps-overlay";
+import { DraggableOverlay } from "./draggable-overlay";
 import { Stamp } from "./types";
 
 interface CodePreviewProps {
@@ -21,6 +21,8 @@ interface CodePreviewProps {
     info: PanInfo,
     stampId: string
   ) => void;
+  onUpdateStamp: (stampId: string, updates: Partial<Stamp>) => void;
+  onRemoveStamp: (stampId: string) => void;
 }
 
 export function CodePreview({
@@ -33,6 +35,8 @@ export function CodePreview({
   draggedStamp,
   handleDragStart,
   handleDragEnd,
+  onUpdateStamp,
+  onRemoveStamp,
 }: CodePreviewProps) {
   return (
     <div className="relative group min-w-0">
@@ -58,12 +62,14 @@ export function CodePreview({
             >
               {code || "// Your code will appear here"}
             </SyntaxHighlighter>
-            <StampsOverlay
+            <DraggableOverlay
               stamps={stamps}
               draggedStamp={draggedStamp}
               handleDragStart={handleDragStart}
               handleDragEnd={handleDragEnd}
               previewRef={previewRef}
+              onUpdateStamp={onUpdateStamp}
+              onRemoveStamp={onRemoveStamp}
             />
           </div>
         </div>

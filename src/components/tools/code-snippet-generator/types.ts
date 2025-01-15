@@ -23,6 +23,14 @@ export interface Stamp {
   y: number;
   icon: React.ReactNode;
   isDragging?: boolean;
+  rotation: number;
+  scale: number;
+  opacity: number;
+  brightness?: number;
+  contrast?: number;
+  saturation?: number;
+  exposure?: number;
+  hue?: number;
 }
 
 export interface StampIcon {
@@ -36,4 +44,22 @@ export interface FormatOption {
   label: string;
   dimensions: string;
   description?: string;
+}
+
+export interface UploadedImage {
+  id: string;
+  url: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  isDragging?: boolean;
+  rotation: number;
+  scale: number;
+  opacity: number;
+  brightness: number;
+  contrast: number;
+  saturation: number;
+  exposure: number;
+  hue: number;
 } 

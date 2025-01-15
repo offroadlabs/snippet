@@ -1,43 +1,58 @@
 import { create } from 'zustand';
-import type { ExportOptions } from '@/components/tools/code-snippet-generator/types';
+import type { UploadedImage, ExportOptions } from '@/components/tools/code-snippet-generator/types';
 
 interface CodeGeneratorStore {
-  // État
   code: string;
   language: string;
-  isExporting: boolean;
   showLineNumbers: boolean;
-  exportOptions: ExportOptions;
   title: string;
-
-  // Actions
+  isExporting: boolean;
+  uploadedImages: UploadedImage[];
+  exportOptions: ExportOptions;
   setCode: (code: string) => void;
   setLanguage: (language: string) => void;
-  setIsExporting: (isExporting: boolean) => void;
   setShowLineNumbers: (show: boolean) => void;
-  setExportOptions: (options: Partial<ExportOptions>) => void;
   setTitle: (title: string) => void;
+  setIsExporting: (isExporting: boolean) => void;
+  addImage: (image: UploadedImage) => void;
+  updateImage: (id: string, updates: Partial<UploadedImage>) => void;
+  removeImage: (id: string) => void;
+  setExportOptions: (options: Partial<ExportOptions>) => void;
 }
 
 export const useCodeGeneratorStore = create<CodeGeneratorStore>((set) => ({
   code: '',
   language: 'typescript',
-  isExporting: false,
   showLineNumbers: true,
+  title: '',
+  isExporting: false,
+  uploadedImages: [],
   exportOptions: {
     format: 'portrait',
     fitContent: true,
     includeWatermark: true,
   },
-  title: '',
-
   setCode: (code) => set({ code }),
   setLanguage: (language) => set({ language }),
-  setIsExporting: (isExporting) => set({ isExporting }),
-  setShowLineNumbers: (showLineNumbers) => set({ showLineNumbers }),
-  setExportOptions: (options) => 
-    set((state) => ({ 
-      exportOptions: { ...state.exportOptions, ...options } 
-    })),
+  setShowLineNumbers: (show) => set({ showLineNumbers: show }),
   setTitle: (title) => set({ title }),
+  setIsExporting: (isExporting) => set({ isExporting }),
+  addImage: (image) =>
+    set((state) => ({
+      uploadedImages: [...state.uploadedImages, image],
+    })),
+  updateImage: (id, updates) =>
+    set((state) => ({
+      uploadedImages: state.uploadedImages.map((img) =>
+        img.id === id ? { ...img, ...updates } : img
+      ),
+    })),
+  removeImage: (id) =>
+    set((state) => ({
+      uploadedImages: state.uploadedImages.filter((img) => img.id !== id),
+    })),
+  setExportOptions: (options) =>
+    set((state) => ({
+      exportOptions: { ...state.exportOptions, ...options },
+    })),
 })); 

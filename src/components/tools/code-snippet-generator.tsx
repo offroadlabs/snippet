@@ -3,15 +3,15 @@
 import * as React from "react";
 import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
-import html2canvas from "html2canvas";
 import { Textarea } from "@/components/ui/textarea";
 import type { PanInfo } from "framer-motion";
-import { SITE_URL, STAMP_ICONS } from "./code-snippet-generator/constants";
+import { STAMP_ICONS } from "./code-snippet-generator/constants";
 import { Toolbar } from "./code-snippet-generator/toolbar";
 import { CodePreview } from "./code-snippet-generator/code-preview";
 import { CaptureOverlay } from "./code-snippet-generator/capture-overlay";
-import type { Stamp, ExportFormat } from "./code-snippet-generator/types";
+import type { Stamp } from "./code-snippet-generator/types";
 import { useCodeGeneratorStore } from "@/store/code-generator-store";
+import { exportToPng } from "./code-snippet-generator/export-processor";
 
 export function CodeSnippetGenerator() {
   const {
@@ -23,6 +23,7 @@ export function CodeSnippetGenerator() {
     title,
     setCode,
     setIsExporting,
+    uploadedImages,
   } = useCodeGeneratorStore();
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [selectedStamp, setSelectedStamp] = useState<string | null>(null);
@@ -34,16 +35,58 @@ export function CodeSnippetGenerator() {
     const selectedIcon = STAMP_ICONS.find((icon) => icon.id === stampId);
     if (!selectedIcon) return;
 
-    setStamps((prev) => [
-      ...prev,
-      {
-        id: `${stampId}-${Date.now()}`,
-        x,
-        y,
-        icon: <div className="text-2xl select-none">{selectedIcon.emoji}</div>,
-        isDragging: false,
-      },
-    ]);
+    const stampUniqueId = `${stampId}-${Date.now()}`;
+    const newStamp: Stamp = {
+      id: stampUniqueId,
+      x,
+      y,
+      icon: (
+        <div
+          className="text-2xl select-none"
+          data-stamp-id={stampUniqueId}
+          style={{
+            width: "2rem",
+            height: "2rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {selectedIcon.emoji}
+        </div>
+      ),
+      isDragging: false,
+      rotation: 0,
+      scale: 1,
+      opacity: 1,
+      brightness: 1,
+      contrast: 1,
+      saturation: 1,
+      exposure: 1,
+      hue: 0,
+    };
+
+    setStamps((prev) => [...prev, newStamp]);
+  }, []);
+
+  const updateStamp = useCallback(
+    (stampId: string, updates: Partial<Stamp>) => {
+      setStamps((prev) =>
+        prev.map((stamp) =>
+          stamp.id === stampId
+            ? {
+                ...stamp,
+                ...updates,
+              }
+            : stamp
+        )
+      );
+    },
+    []
+  );
+
+  const removeStamp = useCallback((stampId: string) => {
+    setStamps((prev) => prev.filter((stamp) => stamp.id !== stampId));
   }, []);
 
   const handleStampClick = useCallback(
@@ -54,7 +97,6 @@ export function CodeSnippetGenerator() {
       if (!container) return;
 
       const rect = container.getBoundingClientRect();
-      // Placer le stamp au centre de la zone de rendu
       const x = rect.width / 2;
       const y = rect.height / 2;
 
@@ -76,19 +118,18 @@ export function CodeSnippetGenerator() {
       );
       if (!selectedIcon) return;
 
-      setStamps((prev) => [
-        ...prev,
-        {
-          id: `${selectedStamp}-${Date.now()}`,
-          x,
-          y,
-          icon: (
-            <div className="text-2xl select-none">{selectedIcon.emoji}</div>
-          ),
-          isDragging: false,
-        },
-      ]);
+      const newStamp: Stamp = {
+        id: `${selectedStamp}-${Date.now()}`,
+        x,
+        y,
+        icon: <div className="text-2xl select-none">{selectedIcon.emoji}</div>,
+        isDragging: false,
+        rotation: 0,
+        scale: 1,
+        opacity: 1,
+      };
 
+      setStamps((prev) => [...prev, newStamp]);
       setSelectedStamp(null);
     },
     [selectedStamp]
@@ -111,11 +152,9 @@ export function CodeSnippetGenerator() {
 
     const rect = container.getBoundingClientRect();
 
-    // Calculer les nouvelles coordonnées
     let newX = stamp.x + info.offset.x;
     let newY = stamp.y + info.offset.y;
 
-    // Limiter les coordonnées à l'intérieur de la zone de prévisualisation
     newX = Math.max(0, Math.min(newX, rect.width));
     newY = Math.max(0, Math.min(newY, rect.height));
 
@@ -143,138 +182,21 @@ export function CodeSnippetGenerator() {
       // Attendre un peu pour que l'animation de flash soit visible
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      const exportContainer = document.createElement("div");
-      exportContainer.style.padding = "48px";
-      exportContainer.style.background =
-        "linear-gradient(to bottom, rgba(158, 195, 58, 0.05), rgba(36, 135, 199, 0.05))";
-      exportContainer.style.borderRadius = "16px";
-      exportContainer.style.position = "relative";
-      exportContainer.style.display = "flex";
-      exportContainer.style.flexDirection = "column";
+      const imageUrl = await exportToPng(
+        previewRef.current,
+        exportOptions,
+        stamps,
+        uploadedImages,
+        title
+      );
 
-      if (!exportOptions.fitContent) {
-        exportContainer.style.alignItems = "center";
-        exportContainer.style.justifyContent = "center";
-      }
-
-      const getDimensions = (format: ExportFormat) => {
-        switch (format) {
-          case "portrait":
-            return { width: 1080, height: 1350 };
-          case "landscape":
-            return { width: 1920, height: 1080 };
-          case "x-post":
-            return { width: 1200, height: 675 };
-          case "x-card":
-            return { width: 1200, height: 628 };
-          case "linkedin-post":
-            return { width: 1200, height: 1200 };
-          case "linkedin-article":
-            return { width: 1200, height: 644 };
-          default:
-            // Valeur par défaut au cas où
-            return { width: 1080, height: 1350 };
-        }
-      };
-
-      const dimensions = getDimensions(exportOptions.format);
-      exportContainer.style.width = `${dimensions.width}px`;
-      if (!exportOptions.fitContent) {
-        exportContainer.style.height = `${dimensions.height}px`;
-      }
-
-      // Ajouter le titre en en-tête
-      if (title) {
-        const titleElement = document.createElement("div");
-        titleElement.style.position = "absolute";
-        titleElement.style.left = "0";
-        titleElement.style.width = "100%";
-        titleElement.style.top = "0";
-        titleElement.style.textAlign = "center";
-        titleElement.style.fontSize = "24px";
-        titleElement.style.fontWeight = "bold";
-        titleElement.style.color = "rgb(148 163 184)";
-        titleElement.textContent = title;
-        exportContainer.appendChild(titleElement);
-      }
-
-      // Cloner et ajuster le contenu à exporter
-      const contentToExport = previewRef.current.cloneNode(true) as HTMLElement;
-      contentToExport.style.width = "100%";
-      if (!exportOptions.fitContent) {
-        contentToExport.style.maxHeight =
-          exportOptions.format === "portrait" ? "1200px" : "900px";
-      } else {
-        contentToExport.style.height = "auto";
-      }
-      contentToExport.style.display = "flex";
-      contentToExport.style.flexDirection = "column";
-
-      // Ajuster la taille du SyntaxHighlighter à l'intérieur du clone
-      const syntaxHighlighter = contentToExport.querySelector(
-        ".syntax-highlighter"
-      ) as HTMLElement;
-      if (syntaxHighlighter) {
-        syntaxHighlighter.style.minHeight = "unset";
-        syntaxHighlighter.style.height = "auto";
-      }
-
-      exportContainer.appendChild(contentToExport);
-
-      // Ajouter l'URL en filigrane si l'option est activée
-      if (exportOptions.includeWatermark) {
-        const watermark = document.createElement("div");
-        watermark.style.position = "absolute";
-        watermark.style.bottom = "16px";
-        watermark.style.left = "0";
-        watermark.style.width = "100%";
-        watermark.style.textAlign = "center";
-        watermark.style.color = "rgb(148 163 184)";
-        watermark.style.fontSize = "8px";
-        watermark.style.fontFamily = "monospace";
-        watermark.style.opacity = "0.7";
-        watermark.textContent = `Powered by ${SITE_URL}`;
-        exportContainer.appendChild(watermark);
-      }
-
-      document.body.appendChild(exportContainer);
-
-      // Obtenir les dimensions réelles du contenu
-      const contentRect = exportContainer.getBoundingClientRect();
-
-      const canvas = await html2canvas(exportContainer, {
-        scale: 2,
-        backgroundColor: null,
-        logging: false,
-        width: dimensions.width,
-        height: exportOptions.fitContent
-          ? Math.ceil(contentRect.height)
-          : dimensions.height,
-      });
-
-      // Nettoyer le DOM
-      document.body.removeChild(exportContainer);
-
-      // Convert to blob
-      const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob(
-          (blob) => {
-            resolve(blob as Blob);
-          },
-          "image/png",
-          1.0
-        );
-      });
-
-      // Create download link
-      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.href = url;
+      link.href = imageUrl;
       link.download = `code-snippet-${new Date().getTime()}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(imageUrl);
     } catch (error) {
       console.error("Export failed:", error);
     } finally {
@@ -343,8 +265,9 @@ export function CodeSnippetGenerator() {
             draggedStamp={draggedStamp}
             handleDragStart={handleDragStart}
             handleDragEnd={handleDragEnd}
+            onUpdateStamp={updateStamp}
+            onRemoveStamp={removeStamp}
           />
-
           <CaptureOverlay isCapturing={isCapturing} />
         </motion.div>
       </div>

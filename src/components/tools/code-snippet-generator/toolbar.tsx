@@ -15,6 +15,7 @@ import { StampSection } from "./stamp-section";
 import { STAMP_ICONS } from "./constants";
 import { Input } from "@/components/ui/input";
 import { useCodeGeneratorStore } from "@/store/code-generator-store";
+import { ImageUpload } from "./image-upload";
 
 interface ToolbarProps {
   handleExport: () => Promise<void>;
@@ -35,8 +36,9 @@ export function Toolbar({ handleExport, handleStampClick }: ToolbarProps) {
 
   const [isStampPopoverOpen, setIsStampPopoverOpen] = React.useState(false);
 
-  const handleStampSelection = (stampId: string) => {
+  const handleStampSelection = async (stampId: string) => {
     handleStampClick(stampId);
+    await new Promise((resolve) => setTimeout(resolve, 100));
     setIsStampPopoverOpen(false);
   };
 
@@ -63,6 +65,7 @@ export function Toolbar({ handleExport, handleStampClick }: ToolbarProps) {
           >
             <Hash className="h-4 w-4" />
           </Toggle>
+          <ImageUpload />
           <Popover
             open={isStampPopoverOpen}
             onOpenChange={setIsStampPopoverOpen}
